@@ -5,4 +5,4 @@
 
 ![google_logo](google-hackathon-logo.png)
 **Google APIs used in this project:**
-- [Prompt API](https://developer.chrome.com/docs/ai/prompt-api) - This API was used as a way to reduce the amount of legacy interface. With language models, you can interface with apps and programs without navigating cluttered UI.
+- [Rewriter API](https://developer.chrome.com/docs/ai/rewriter-api) - This API was used to rewrite the text extracted from resumes as JSON.

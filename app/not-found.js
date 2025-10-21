@@ -1,7 +1,7 @@
-// const metadata = {
-//   title: "Not Found - My Cracked Resume",
-//   description: "Seems you've wandered off the path...",
-// };
+export const metadata = {
+  title: "Not Found - My Cracked Resume",
+  description: "Seems you've wandered off the path...",
+};
 
 import { Terminal } from "lucide-react";
 import Link from "next/link";

@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "My Cracked Resume",
+  title: "AI Career Guide | My Cracked Resume",
   description: "A resume that progresses with you.",
 };
 
