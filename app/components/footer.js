@@ -1,22 +1,32 @@
 "use client";
 
+import { faGithub, faTiktok } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 
 export default function Footer() {
     return (
-        <footer className="flex flex-col items-center justify-center flex-wrap gap-[1em] bg-zinc-100 border-t border-zinc-200 p-4">
-            <p className="font-semibold text-sm">© My Cracked Resume 2025</p>
-            <b>Quick Links</b>
-            <Link
-                className="text-blue-500 hover:underline"
-                passHref href={"https://www.tiktok.com/@mycrackedresume"}>
-                TikTok
-            </Link>
-            <Link
-                className="text-blue-500 hover:underline"
-                passHref href={"https://github.com/SilisK/my-cracked-resume"}>
-                Github
-            </Link>
+        <footer className="border-t border-zinc-200 min-h-32 flex items-center p-4">
+            <div className="flex gap-[2.5em] flex-wrap items-center justify-between w-full max-w-6xl mx-auto">
+                <p className="text-zinc-500 text-xs">© 2025 My Cracked Resume. All Rights Reserved.</p>
+                <div className="grid text-sm">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <Link
+                            className="text-blue-500 hover:underline"
+                            target="_blank"
+                            passHref href={"https://www.tiktok.com/@mycrackedresume"}>
+                            <FontAwesomeIcon icon={faTiktok} size="2x" />
+                        </Link>
+                        <Link
+                            className="text-blue-500 hover:underline"
+                            target="_blank"
+                            passHref href={"https://github.com/SilisK/my-cracked-resume"}>
+                            <FontAwesomeIcon icon={faGithub} size="2x" />
+                        </Link>
+                    </div>
+                </div>
+
+            </div>
         </footer>
     );
 }

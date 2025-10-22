@@ -1,81 +1,96 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import UploadResume from "../components/upload-resume/upload-resume";
+import ResumeParser from "./components/resume-parser";
+import { getPrompt } from "../lib/prompts";
+import { getResumeText } from "../lib/upload-resume-helpers";
 import { Profile } from "../models/generic/profile";
+import ProfileCard from "../components/profile/profile-card";
 
 export default function Client() {
     const [file, setFile] = useState(null);
     const [resumeProfile, setResumeProfile] = useState({});
+    const [loadingText, setLoadingText] = useState("");
+    const [errorText, setErrorText] = useState("");
 
-    const parsePdf = async () => {
+    const rewriteResume = async () => {
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const res = await fetch('/api/parse-pdf', {
-            method: 'POST',
-            body: formData,
-        });
-
-        const resumeText = await res.json();
-
-        console.log(resumeText);
-
-        const profileModel = new Profile();
-        const profileModelAsText = JSON.stringify(profileModel);
-        console.log(profileModel, profileModelAsText);
-
-        const rewriter = await Rewriter.create({
-            sharedContext: "A resume sent in by a user.",
-            // tone: "as-is",       // required
-            length: "shorter",     // required
-            format: "plain-text" // required
-        });
-
-        const m_context = `
-                You are a parser that extracts structured data from a resume. Your task is to convert the resume text into a JSON object that strictly follows this model:
-
-                ${profileModelAsText}
-
-                Only include the fields that are present and identifiable in the resume. If any information is missing, omit those fields — do not add placeholders or make up data. Use correct data types (e.g., strings, arrays, nested objects). The JSON should be syntactically valid and ready for parsing.
-
-                Output only the JSON. Do not include any extra explanation, commentary, or formatting.
-                `;
-
-        console.log(m_context);
-
-        const stream = rewriter.rewriteStreaming(resumeText.text, {
-            context: m_context
-        });
-
-        let result = "";
-        for await (const chunk of stream) {
-            result += chunk;
-        }
         try {
-            const stringifiedJSON = result.substring(7, result.length - 3);
-            const parsedResult = JSON.parse(stringifiedJSON);
-            console.log(stringifiedJSON, parsedResult);
+            const formData = new FormData();
+            formData.append("file", file);
+
+            setLoadingText("Parsing resume...");
+
+            const resumeText = await getResumeText(formData);
+
+            setLoadingText("Waking up AI...");
+
+            // Docs: https://developer.chrome.com/docs/ai/rewriter-api
+            const rewriter = await Rewriter.create({
+                sharedContext: "A resume sent in by a user.",
+                length: "shorter",
+                format: "plain-text"
+            });
+
+            const m_context = getPrompt("Rewriter_Initial_Resume");
+
+            const stream = rewriter.rewriteStreaming(resumeText, {
+                context: m_context
+            });
+
+            setLoadingText("Reading your resume...");
+
+            let result = "";
+            for await (const chunk of stream) {
+                result += chunk;
+            }
+
+            console.clear();
+            console.log(result);
+
+            let cleanedResult = null;
+            // the ai sometimes returns readme style json so we have to extract a valid substring for parsing
+            if (result.startsWith('```json') && result.endsWith('```')) {
+                cleanedResult = result.substring(7, result.length - 3);
+            }
+
+            const parsedResult = JSON.parse(cleanedResult || result);
+
+            // finally, we pass the data into a Profile object to ensure all fields are present
+            const m_profile = new Profile(parsedResult);
+            setResumeProfile(m_profile);
+
+            console.log(m_profile);
+
+            setLoadingText("");
         }
         catch (error) {
-            console.log(error);
-        }
+            // tell the user in ui that the request failed
 
-        console.log("Rewritten Resume JSON:", result);
+            console.log("Something went wrong:", error);
+
+            setLoadingText("");
+        }
     }
 
     useEffect(() => {
-        parsePdf();
+        rewriteResume();
     }, [file]);
 
     return (
-        <div className="min-h-screen">
-            <UploadResume
-                file={file}
-                setFile={setFile}
-            />
+        <div className="grid place-items-center min-h-96 py-16">
+            {Object.keys(resumeProfile)?.length > 0 ? (
+                <ProfileCard
+                    profile={resumeProfile}
+                />
+            ) : (
+                <ResumeParser
+                    file={file}
+                    setFile={setFile}
+                    loadingText={loadingText}
+                />
+            )}
         </div>
     );
 }
