@@ -12,20 +12,19 @@ export default function Footer() {
                 <div className="grid text-sm">
                     <div className="flex items-center gap-2 flex-wrap">
                         <Link
-                            className="text-blue-500 hover:underline"
+                            className="text-sky-500 hover:underline"
                             target="_blank"
                             passHref href={"https://www.tiktok.com/@mycrackedresume"}>
                             <FontAwesomeIcon icon={faTiktok} size="2x" />
                         </Link>
                         <Link
-                            className="text-blue-500 hover:underline"
+                            className="text-sky-500 hover:underline"
                             target="_blank"
                             passHref href={"https://github.com/SilisK/my-cracked-resume"}>
                             <FontAwesomeIcon icon={faGithub} size="2x" />
                         </Link>
                     </div>
                 </div>
-
             </div>
         </footer>
     );

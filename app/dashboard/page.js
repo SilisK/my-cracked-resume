@@ -2,8 +2,8 @@ import Navbar from "../components/nav";
 import Client from "./client";
 
 export const metadata = {
-    title: "Upload Your Resume",
-    description: "Parse your resume with AI."
+    title: "Dashboard",
+    description: ""
 }
 
 export default function Page() {

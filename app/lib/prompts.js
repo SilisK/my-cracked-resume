@@ -21,16 +21,28 @@ export const getPrompt = (name) => {
 
                     - "languages" refers only to human languages (e.g., English, Spanish, Mandarin). If no languages are mentioned, omit the field.
 
-                    - "skills" should include technical skills, programming languages, frameworks, tools, and software proficiencies. When parsing programming languages:
+                    - "skills" must be an array of strings. It should include:
+                        - For technical roles: programming languages, frameworks, tools, and software proficiencies
+                        - For non-technical roles: relevant software (e.g., Microsoft Office, Salesforce, Adobe Creative Suite), methodologies (e.g., Agile, Six Sigma), domain expertise, and professional competencies
+                        - For all roles: both hard skills and relevant soft skills when explicitly listed (e.g., "Project Management", "Data Analysis", "Public Speaking")
+                        
+                        When parsing technical skills:
                         - Preserve exact formatting and capitalization (e.g., "C#" not "C #", "C++" not "C ++")
                         - Common examples: JavaScript, TypeScript, Python, Java, C#, C++, Go, Rust, Swift, Kotlin, PHP, Ruby
                         - Remove any unnecessary spaces within language names
                         - Keep framework names accurate (e.g., "React.js" or "React", "Node.js" or "Node")
+                        
+                        When parsing non-technical skills:
+                        - Include software proficiencies (e.g., "Excel", "PowerPoint", "Tableau", "SAP")
+                        - Include certifications and methodologies (e.g., "PMP", "Scrum Master", "Lean Manufacturing")
+                        - Include domain-specific tools (e.g., "AutoCAD" for engineering, "Final Cut Pro" for media)
 
                     - "availability" must be one of the following values (if explicitly stated or can be reasonably inferred):
                         - "just networking"
                         - "seeking job opportunities"
                         - "looking for clubs & programs"
+
+                    - "socials" must be an empty array.
 
                     - If the resume does not include an explicit summary, write a brief 1–2 sentence summary based on the main theme of the resume.
 

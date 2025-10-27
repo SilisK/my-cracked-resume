@@ -3,6 +3,12 @@ export type AvailabilityOption =
   | "seeking job opportunities"
   | "looking for clubs & programs";
 
+export type SocialOption =
+  | { name: "LinkedIn", url: "" }
+  | { name: "Github", url: "" }
+  | { name: "X", url: "" }
+  | { name: "Website", url: "" }
+
 export class Profile {
   name: string | null;
   location: string | null;
@@ -13,7 +19,7 @@ export class Profile {
   headline: string | null;
   photoUrl: string | null;
   website: string | null;
-  socials: Record<string, string> | null;
+  socials: Record<string, string>[] | null;
   skills: string[] | null;
   languages: string[] | null; // Human languages only
   availability: AvailabilityOption | null;
@@ -42,7 +48,7 @@ export class Profile {
     headline?: string | null;
     photoUrl?: string | null;
     website?: string | null;
-    socials?: Record<string, string> | null;
+    socials?: Record<string, string>[] | null;
     skills?: string[] | null;
     languages?: string[] | null;
     availability?: AvailabilityOption | null;

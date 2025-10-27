@@ -33,7 +33,7 @@ export default function ResumeParser({
     };
 
     return (
-        <div className="bg-white shadow-lg rounded-lg max-w-xl mx-auto px-4 pt-8 pb-16 space-y-6">
+        <div className="bg-white sm:border border-zinc-100 sm:shadow-lg sm:p-8 sm:pb-16 rounded-lg max-w-xl mx-auto grid gap-2">
             <h2 className="text-[20px] leading-snug font-medium tracking-tight text-foreground lg:text-[28px]">
                 Upload Your Resume
             </h2>
@@ -43,11 +43,12 @@ export default function ResumeParser({
             <input
                 type="file"
                 accept=".pdf,.docx,.txt"
+                disabled={loadingText ? true : false}
                 onChange={(e) => {
                     if (loadingText) return;
                     handleFileChange(e);
                 }}
-                className={`${loadingText ? "animate-pulse" : ""} block w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100`}
+                className={`${loadingText ? "animate-pulse cursor-not-allowed" : "cursor-pointer"} block w-full text-sm text-gray-700 border border-gray-300 rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100`}
             />
 
             {error && <p className="text-red-500 text-sm">{error}</p>}

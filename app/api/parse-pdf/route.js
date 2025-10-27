@@ -52,8 +52,8 @@ export async function POST(req) {
             const doc = new Docxtemplater(zip);
 
             const text = doc.getFullText();
-            console.clear();
-            console.log(text);
+            // console.clear();
+            // console.log(text);
             resultsFromFile.push(text.trim());
         }
 
