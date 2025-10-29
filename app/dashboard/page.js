@@ -3,7 +3,7 @@ import Client from "./client";
 
 export const metadata = {
     title: "Dashboard",
-    description: ""
+    description: "",
 }
 
 export default function Page() {

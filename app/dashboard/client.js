@@ -4,22 +4,37 @@ import { Loader2, MessageCircleDashed, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Profile } from "../models/generic/profile";
+import Markdown from "react-markdown";
 
 export default function Client() {
     const router = useRouter();
+
+    const [conversation, setConversation] = useState([]);
 
     const [prompt, setPrompt] = useState();
     const [promptSetting, setPromptSetting] = useState("Career");
     const [firstName, setFirstName] = useState("");
     const [resumeProfile, setResumeProfile] = useState(null);
 
+    // using this approach to get experimental models into website
+    useEffect(() => {
+        const meta = document.createElement('meta');
+        meta.httpEquiv = 'origin-trial';
+        meta.content = 'Au2XGBVCng8laatAt3TPCfUo5NOw0MVS2qlnKQf5Gab2KxToJ1fIktTS7xh9A222xMnb9AvUJA4hQvNzZX2uwQwAAABdeyJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElNdWx0aW1vZGFsSW5wdXQiLCJleHBpcnkiOjE3NzQzMTA0MDB9';
+        document.head.appendChild(meta);
+
+        return () => {
+            document.head.removeChild(meta); // cleanup on unmount
+        };
+    }, []);
+
     useEffect(() => {
         const profile = localStorage.getItem("profile");
         if (profile) {
             const constructedProfile = new Profile(JSON.parse(profile));
 
-            const nameParts = constructedProfile.name.split(" ");
-            setFirstName(nameParts[0].trim() || "there");
+            const nameParts = constructedProfile.name?.split(" ") || [];
+            setFirstName(nameParts[0]?.trim() || "there");
 
             setTimeout(() => {
                 setResumeProfile(constructedProfile);
@@ -31,18 +46,46 @@ export default function Client() {
     }, []);
 
     useEffect(() => {
+        console.log("sendMessage()");
         sendMessage();
     }, []);
 
     const sendMessage = async () => {
         if ('LanguageModel' in self) {
-            const session = await LanguageModel.create({
-                monitor(m) {
-                    m.addEventListener('downloadprogress', (e) => {
-                        console.log(`Downloaded ${e.loaded * 100}%`);
-                    });
-                },
-            });
+            // Start by checking if it's possible to create a session based on the
+            // availability of the model, and the characteristics of the device.
+
+            const start = performance.now();
+
+            const { defaultTemperature, maxTemperature, defaultTopK, maxTopK } =
+                await LanguageModel.params();
+
+            const availability = await LanguageModel.availability();
+
+            if (availability !== 'unavailable') {
+                const session = await LanguageModel.create();
+
+                console.log(session);
+
+                const m_convo = [...conversation];
+                let message = "";
+                m_convo.push(message);
+
+                // Prompt the model and wait for the whole result to come back.
+                const stream = session.promptStreaming('Write me an extra-short poem!');
+                for await (const chunk of stream) {
+                    console.log(chunk);
+                    message += chunk;
+                    m_convo[m_convo.length - 1] = message;
+                    setConversation([...m_convo]);
+                }
+
+                console.log([...m_convo]);
+
+                const end = performance.now();
+
+                const seconds = (end - start) / 1000;
+            }
         }
     }
 
@@ -58,13 +101,20 @@ export default function Client() {
         <div className="min-h-screen pt-24 pb-16">
             <div className="">
                 <div className="p-4 mx-auto max-w-xl space-y-4">
-                    <div className="text-center">
-                        <h1
-                            style={{ fontFamily: "monospace" }}
-                            className="text-2xl font-semibold inline-flex min-h-10.5 items-baseline whitespace-pre-wrap">
-                            Hi {firstName}, let's chat.
-                        </h1>
+                    <div className="border-4">
+                        {conversation.map((message, i) => (
+                            <Markdown key={i}>{message}</Markdown>
+                        ))}
                     </div>
+                    {conversation.length == 0 && (
+                        <div className="text-center">
+                            <h1
+                                style={{ fontFamily: "monospace" }}
+                                className="text-2xl font-semibold inline-flex min-h-10.5 items-baseline whitespace-pre-wrap">
+                                Hi {firstName}, let's chat.
+                            </h1>
+                        </div>
+                    )}
                     <div className="flex flex-col gap-4 border border-zinc-100 shadow-lg bg-white rounded-3xl mb-8">
                         <textarea
                             value={prompt}

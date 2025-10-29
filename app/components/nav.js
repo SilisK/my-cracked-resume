@@ -64,7 +64,7 @@ export default function Navbar({ autoHide = false }) {
 
     return (
         <nav
-            className={`bg-zinc-50 absolute font-manrope text-lg top-0 left-0 w-full z-100 transition-transform duration-300 ease-in-out ${showNavbar ? 'translate-y-0 border-gray-100' : '-translate-y-full border-transparent'
+            className={`bg-zinc-50 absolute font-manrope text-lg top-0 left-0 w-full z-100 transition-transform duration-300 ease-in-out ${isOpen ? "shadow-lg" : ""} ${showNavbar ? 'translate-y-0 border-gray-100' : '-translate-y-full border-transparent'
                 } bg-white`}
         >
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
